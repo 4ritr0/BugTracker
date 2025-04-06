@@ -16,12 +16,15 @@ public class Bug {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String title;
+
     private String description;
 
     @Enumerated(EnumType.STRING)
     private BugType type;
 
-    private String priority;
+    @Enumerated(EnumType.STRING)
+    private BugPriority priority;
 
     @Enumerated(EnumType.STRING)
     private BugStatus status = BugStatus.NEW;

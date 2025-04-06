@@ -40,7 +40,20 @@ public class TesterService {
                 .orElseThrow(() -> new RuntimeException("Tester not found"));
 
         bug.setReportedBy(tester);
-        bug.setStatus(BugStatus.NEW);  // Optional: default value
+        bug.setStatus(BugStatus.NEW);  // Default value for new bugs
+        return bugRepository.save(bug);
+    }
+    
+    // New method to verify fixed bugs
+    public Bug verifyBugFix(Long bugId) {
+        Bug bug = bugRepository.findById(bugId)
+                .orElseThrow(() -> new RuntimeException("Bug not found"));
+        
+        if (bug.getStatus() != BugStatus.FIXED) {
+            throw new IllegalStateException("Only FIXED bugs can be verified");
+        }
+        
+        bug.setStatus(BugStatus.VERIFIED);
         return bugRepository.save(bug);
     }
 }
