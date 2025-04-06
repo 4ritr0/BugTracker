@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Manager Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f3f4f6;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    .user-info {
+      font-weight: bold;
+    }
+    
+    .logout-btn {
+      background-color: #e53e3e;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .dashboard-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card {
+      background-color: #f8fafc;
+      padding: 15px;
+      border-radius: 8px;
+      flex: 1;
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4f46e5;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>Project Manager Dashboard</h2>
+    <div class="user-info">
+      Welcome, <span id="username">User</span>!
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+  
+  <div class="dashboard-content">
+    <h3>Project Overview</h3>
+    
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-number">12</div>
+        <div>Open Bugs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">5</div>
+        <div>In Progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">8</div>
+        <div>Resolved</div>
+      </div>
+    </div>
+    
+    <h3>Recent Bugs</h3>
+    <div id="bugs-list">
+      Loading bugs...
+    </div>
+  </div>
+
+  <script>
+    // Check if user is logged in
+    const userId = localStorage.getItem("userId");
+    const username = localStorage.getItem("username");
+    const role = localStorage.getItem("role");
+    
+    // If not logged in or wrong role, redirect to login
+    if (!userId || role !== "pm") {
+      window.location.href = "/index.html";
+    }
+    
+    // Display username
+    document.getElementById("username").textContent = username;
+    
+    // Logout function
+    function logout() {
+      localStorage.removeItem("userId");
+      localStorage.removeItem("username");
+      localStorage.removeItem("role");
+      window.location.href = "/index.html";
+    }
+    
+    // Here you would fetch and display project statistics and bugs
+    // Example:
+    /*
+    async function loadDashboard() {
+      try {
+        const response = await fetch(`http://localhost:8080/api/dashboard/pm/${userId}`);
+        const data = await response.json();
+        
+        // Update statistics
+        document.querySelector('.stats .stat-card:nth-child(1) .stat-number').textContent = data.openBugs;
+        document.querySelector('.stats .stat-card:nth-child(2) .stat-number').textContent = data.inProgressBugs;
+        document.querySelector('.stats .stat-card:nth-child(3) .stat-number').textContent = data.resolvedBugs;
+        
+        // Update recent bugs
+        const bugsList = document.getElementById("bugs-list");
+        if (data.recentBugs.length === 0) {
+          bugsList.innerHTML = "<p>No recent bugs.</p>";
+        } else {
+          let html = "<ul>";
+          data.recentBugs.forEach(bug => {
+            html += `<li>${bug.title} - ${bug.status}</li>`;
+          });
+          html += "</ul>";
+          bugsList.innerHTML = html;
+        }
+      } catch (error) {
+        console.error("Error loading dashboard:", error);
+      }
+    }
+    
+    loadDashboard();
+    */
+  </script>
+</body>
+</html>

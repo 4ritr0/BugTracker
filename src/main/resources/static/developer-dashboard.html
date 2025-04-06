@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f3f4f6;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    .user-info {
+      font-weight: bold;
+    }
+    
+    .logout-btn {
+      background-color: #e53e3e;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .dashboard-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>Developer Dashboard</h2>
+    <div class="user-info">
+      Welcome, <span id="username">User</span>!
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+  
+  <div class="dashboard-content">
+    <h3>Bugs Assigned to You</h3>
+    <div id="bugs-list">
+      Loading bugs...
+    </div>
+  </div>
+
+  <script>
+    // Check if user is logged in
+    const userId = localStorage.getItem("userId");
+    const username = localStorage.getItem("username");
+    const role = localStorage.getItem("role");
+    
+    // If not logged in or wrong role, redirect to login
+    if (!userId || role !== "developer") {
+      window.location.href = "/index.html";
+    }
+    
+    // Display username
+    document.getElementById("username").textContent = username;
+    
+    // Logout function
+    function logout() {
+      localStorage.removeItem("userId");
+      localStorage.removeItem("username");
+      localStorage.removeItem("role");
+      window.location.href = "/index.html";
+    }
+    
+    // Here you would fetch and display bugs assigned to this developer
+    // Example:
+    /*
+    async function loadBugs() {
+      try {
+        const response = await fetch(`http://localhost:8080/api/bugs/developer/${userId}`);
+        const bugs = await response.json();
+        
+        const bugsList = document.getElementById("bugs-list");
+        if (bugs.length === 0) {
+          bugsList.innerHTML = "<p>No bugs assigned yet.</p>";
+        } else {
+          let html = "<ul>";
+          bugs.forEach(bug => {
+            html += `<li>${bug.title} - ${bug.status}</li>`;
+          });
+          html += "</ul>";
+          bugsList.innerHTML = html;
+        }
+      } catch (error) {
+        console.error("Error loading bugs:", error);
+        document.getElementById("bugs-list").innerHTML = "<p>Error loading bugs.</p>";
+      }
+    }
+    
+    loadBugs();
+    */
+  </script>
+</body>
+</html>

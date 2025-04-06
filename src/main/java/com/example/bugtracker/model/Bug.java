@@ -10,6 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 public class Bug {
 
+    // Removed unnecessary static Object declaration
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
