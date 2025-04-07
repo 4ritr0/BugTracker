@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/developers")
@@ -33,5 +34,10 @@ public class DeveloperController {
     @DeleteMapping("/{id}")
     public void deleteDeveloper(@PathVariable Long id) {
         developerService.deleteDeveloper(id);
+    }
+
+    @GetMapping("/bug-counts")
+    public Map<Long, Integer> getDeveloperBugCounts() {
+        return developerService.getDeveloperBugCounts();
     }
 }

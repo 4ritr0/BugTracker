@@ -1,5 +1,7 @@
 package com.example.bugtracker.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,4 +36,15 @@ public class Bug {
 
     @ManyToOne
     private Developer assignedTo;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    // Helper methods for UI display
+    public String getDeveloperName() {
+        return assignedTo != null ? assignedTo.getUsername() : "Unassigned";
+    }
+
+    public String getTesterName() {
+        return reportedBy != null ? reportedBy.getUsername() : "Unknown";
+    }
 }

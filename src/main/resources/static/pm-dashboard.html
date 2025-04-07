@@ -41,6 +41,7 @@
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
     }
     
     .stats {
@@ -62,6 +63,161 @@
       font-weight: bold;
       color: #4f46e5;
     }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .tab-btn {
+      background-color: transparent;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-right: 10px;
+      border-bottom: 3px solid transparent;
+    }
+    
+    .tab-btn.active {
+      border-bottom: 3px solid #4299e1;
+      font-weight: bold;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    th {
+      background-color: #f8fafc;
+      font-weight: bold;
+    }
+    
+    tr:hover {
+      background-color: #f1f5f9;
+    }
+    
+    .status-new {
+      color: #e53e3e;
+      font-weight: bold;
+    }
+    
+    .status-assigned {
+      color: #dd6b20;
+      font-weight: bold;
+    }
+    
+    .status-fixed {
+      color: #38a169;
+      font-weight: bold;
+    }
+    
+    .status-verified {
+      color: #2b6cb0;
+      font-weight: bold;
+    }
+    
+    .assign-btn {
+      background-color: #4299e1;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 50%;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    .form-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+    }
+    
+    .submit-btn {
+      background-color: #4299e1;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .developer-item {
+      padding: 5px;
+      margin-bottom: 5px;
+      border-radius: 4px;
+    }
+    
+    .bug-count {
+      background-color: #e2e8f0;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 12px;
+      margin-left: 5px;
+    }
   </style>
 </head>
 <body>
@@ -78,22 +234,92 @@
     
     <div class="stats">
       <div class="stat-card">
-        <div class="stat-number">12</div>
+        <div class="stat-number" id="open-bugs">0</div>
         <div>Open Bugs</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number">5</div>
+        <div class="stat-number" id="in-progress-bugs">0</div>
         <div>In Progress</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number">8</div>
+        <div class="stat-number" id="resolved-bugs">0</div>
         <div>Resolved</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="verified-bugs">0</div>
+        <div>Verified</div>
       </div>
     </div>
     
-    <h3>Recent Bugs</h3>
-    <div id="bugs-list">
-      Loading bugs...
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="view-bugs">View All Bugs</button>
+      <button class="tab-btn" data-tab="assign-bugs">Assign Bugs</button>
+    </div>
+    
+    <div id="view-bugs" class="tab-content active">
+      <h3>All Bugs</h3>
+      <div id="bugs-table">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Type</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Assigned To</th>
+              <th>Reported By</th>
+              <th>Date Created</th>
+            </tr>
+          </thead>
+          <tbody id="all-bugs-body">
+            <tr>
+              <td colspan="8" style="text-align: center;">Loading bugs...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div id="assign-bugs" class="tab-content">
+      <h3>New Bugs Ready for Assignment</h3>
+      <div id="new-bugs-table">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Type</th>
+              <th>Priority</th>
+              <th>Reported By</th>
+              <th>Date Created</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="new-bugs-body">
+            <tr>
+              <td colspan="7" style="text-align: center;">Loading bugs...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Assignment Modal -->
+  <div id="assignModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h3>Assign Bug</h3>
+      <div id="bug-info"></div>
+      <form id="assign-form">
+        <input type="hidden" id="bug-id">
+        <div class="form-group">
+          <label for="developer-select">Select Developer:</label>
+          <select id="developer-select" required></select>
+        </div>
+        <button type="submit" class="submit-btn">Assign Bug</button>
+      </form>
     </div>
   </div>
 
@@ -111,6 +337,23 @@
     // Display username
     document.getElementById("username").textContent = username || "User";
     
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all buttons and contents
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        // Add active class to clicked button and corresponding content
+        button.classList.add('active');
+        const tabId = button.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+    
     // Logout function
     function logout() {
       localStorage.removeItem("userId");
@@ -119,12 +362,34 @@
       window.location.href = "/index.html";
     }
     
-    // Here you would fetch and display project statistics and bugs
-    async function loadDashboard() {
+    // Modal elements
+    const modal = document.getElementById("assignModal");
+    const closeBtn = document.querySelector(".close");
+    
+    // Close modal when clicking on x
+    closeBtn.onclick = function() {
+      modal.style.display = "none";
+    }
+    
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+    
+    // Open modal for bug assignment
+    function openAssignModal(bugId, bugTitle) {
+      document.getElementById("bug-id").value = bugId;
+      document.getElementById("bug-info").innerHTML = `<p><strong>Bug:</strong> ${bugTitle} (ID: ${bugId})</p>`;
+      loadDevelopers();
+      modal.style.display = "block";
+    }
+    
+    // Load dashboard stats
+    async function loadDashboardStats() {
       try {
-        // Use the username from localStorage, or 'default' if not available
         const pmUsername = username || "default";
-        // Fix: Use template literal with proper variable interpolation
         const response = await fetch(`http://localhost:8080/api/dashboard/pm/${pmUsername}`);
         
         if (!response.ok) {
@@ -134,31 +399,179 @@
         const data = await response.json();
         
         // Update statistics
-        document.querySelector('.stats .stat-card:nth-child(1) .stat-number').textContent = data.openBugs;
-        document.querySelector('.stats .stat-card:nth-child(2) .stat-number').textContent = data.inProgressBugs;
-        document.querySelector('.stats .stat-card:nth-child(3) .stat-number').textContent = data.resolvedBugs;
-        
-        // Update recent bugs
-        const bugsList = document.getElementById("bugs-list");
-        if (!data.recentBugs || data.recentBugs.length === 0) {
-          bugsList.innerHTML = "<p>No recent bugs.</p>";
-        } else {
-          let html = "<ul>";
-          data.recentBugs.forEach(bug => {
-            html += `<li>${bug.title} - ${bug.status}</li>`;
-          });
-          html += "</ul>";
-          bugsList.innerHTML = html;
-        }
+        document.getElementById('open-bugs').textContent = data.openBugs;
+        document.getElementById('in-progress-bugs').textContent = data.inProgressBugs;
+        document.getElementById('resolved-bugs').textContent = data.resolvedBugs;
+        document.getElementById('verified-bugs').textContent = data.resolvedBugs || 0; // Using resolved bugs as placeholder if verified not available
       } catch (error) {
-        console.error("Error loading dashboard:", error);
-        document.getElementById("bugs-list").innerHTML = 
-          `<p style="color: red">Error loading dashboard data. Please try again later.</p>`;
+        console.error("Error loading dashboard stats:", error);
       }
     }
     
-    // Call the function when page loads
-    loadDashboard();
+    // Load all bugs
+    async function loadAllBugs() {
+      try {
+        const response = await fetch('http://localhost:8080/api/bugs');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const bugs = await response.json();
+        const tableBody = document.getElementById('all-bugs-body');
+        
+        if (!bugs || bugs.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="8" style="text-align: center;">No bugs found.</td></tr>`;
+          return;
+        }
+        
+        let html = '';
+        bugs.forEach(bug => {
+          const statusClass = bug.status === "NEW" ? "status-new" : 
+                             bug.status === "ASSIGNED" ? "status-assigned" : 
+                             bug.status === "FIXED" ? "status-fixed" :
+                             "status-verified";
+          
+          const date = new Date(bug.createdAt).toLocaleDateString();
+          
+          html += `
+            <tr>
+              <td>${bug.id}</td>
+              <td>${bug.title}</td>
+              <td>${bug.type}</td>
+              <td>${bug.priority}</td>
+              <td class="${statusClass}">${bug.status}</td>
+              <td>${bug.developerName || 'Unassigned'}</td>
+              <td>${bug.testerName || 'Unknown'}</td>
+              <td>${date}</td>
+            </tr>
+          `;
+        });
+        
+        tableBody.innerHTML = html;
+      } catch (error) {
+        console.error("Error loading bugs:", error);
+        document.getElementById('all-bugs-body').innerHTML = 
+          `<tr><td colspan="8" style="text-align: center; color: red;">Error loading bugs: ${error.message}</td></tr>`;
+      }
+    }
+    
+    // Load new bugs that need assignment
+    async function loadNewBugs() {
+      try {
+        const response = await fetch('http://localhost:8080/api/bugs/status/NEW');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const bugs = await response.json();
+        const tableBody = document.getElementById('new-bugs-body');
+        
+        if (!bugs || bugs.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">No new bugs that need assignment.</td></tr>`;
+          return;
+        }
+        
+        let html = '';
+        bugs.forEach(bug => {
+          const date = new Date(bug.createdAt).toLocaleDateString();
+          
+          html += `
+            <tr>
+              <td>${bug.id}</td>
+              <td>${bug.title}</td>
+              <td>${bug.type}</td>
+              <td>${bug.priority}</td>
+              <td>${bug.testerName || 'Unknown'}</td>
+              <td>${date}</td>
+              <td><button class="assign-btn" onclick="openAssignModal(${bug.id}, '${bug.title}')">Assign</button></td>
+            </tr>
+          `;
+        });
+        
+        tableBody.innerHTML = html;
+      } catch (error) {
+        console.error("Error loading new bugs:", error);
+        document.getElementById('new-bugs-body').innerHTML = 
+          `<tr><td colspan="7" style="text-align: center; color: red;">Error loading bugs: ${error.message}</td></tr>`;
+      }
+    }
+    
+    // Load developers for assignment dropdown
+    async function loadDevelopers() {
+      try {
+        const response = await fetch('http://localhost:8080/api/developers');
+        const developerBugsResponse = await fetch('http://localhost:8080/api/developers/bug-counts');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const developers = await response.json();
+        const developerBugCounts = await developerBugsResponse.json();
+        const developerSelect = document.getElementById('developer-select');
+        
+        if (!developers || developers.length === 0) {
+          developerSelect.innerHTML = `<option value="">No developers available</option>`;
+          return;
+        }
+        
+        let html = `<option value="">Select a developer</option>`;
+        developers.forEach(dev => {
+        const bugCount = developerBugCounts[dev.id] || 0;
+        html += `<option value="${dev.id}">${dev.username} - ${bugCount} active bugs</option>`;
+        });
+        
+        developerSelect.innerHTML = html;
+      } catch (error) {
+        console.error("Error loading developers:", error);
+        document.getElementById('developer-select').innerHTML = 
+          `<option value="">Error loading developers</option>`;
+      }
+    }
+    
+    // Assign bug to developer
+    document.getElementById('assign-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const bugId = document.getElementById('bug-id').value;
+      const developerId = document.getElementById('developer-select').value;
+      
+      if (!developerId) {
+        alert("Please select a developer");
+        return;
+      }
+      
+      try {
+        const response = await fetch(`http://localhost:8080/api/bugs/${bugId}/assign/${developerId}`, {
+          method: 'PUT'
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        // Close modal
+        modal.style.display = "none";
+        
+        // Reload data
+        loadDashboardStats();
+        loadAllBugs();
+        loadNewBugs();
+        
+        alert("Bug assigned successfully!");
+      } catch (error) {
+        console.error("Error assigning bug:", error);
+        alert(`Error assigning bug: ${error.message}`);
+      }
+    });
+    
+    // Load data when page loads
+    loadDashboardStats();
+    loadAllBugs();
+    loadNewBugs();
   </script>
+
 </body>
 </html>
