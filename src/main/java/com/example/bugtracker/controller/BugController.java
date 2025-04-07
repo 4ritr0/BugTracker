@@ -34,4 +34,14 @@ public class BugController {
     public void deleteBug(@PathVariable Long bugId) {
         bugService.deleteBug(bugId);
     }
+
+    @GetMapping("/status/{status}")
+    public List<Bug> getBugsByStatus(@PathVariable BugStatus status) {
+        return bugService.getBugsByStatus(status);
+    }
+
+    @GetMapping("/{bugId}")
+    public Bug getBugById(@PathVariable Long bugId) {
+        return bugService.getBugById(bugId);
+    }
 }

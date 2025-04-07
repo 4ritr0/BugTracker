@@ -78,4 +78,15 @@ public class BugService {
         }
         bugRepository.deleteById(bugId);
     }
+    // Add getBugsByStatus method
+    public List<Bug> getBugsByStatus(BugStatus status) {
+        return bugRepository.findByStatus(status);
+    }
+
+    // Add getBugById method
+    public Bug getBugById(Long bugId) {
+        return bugRepository.findById(bugId)
+                .orElseThrow(() -> new RuntimeException("Bug not found"));
+    }
+
 }

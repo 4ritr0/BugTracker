@@ -1,7 +1,10 @@
 package com.example.bugtracker.controller;
 
+import com.example.bugtracker.model.Bug;
+import com.example.bugtracker.model.BugStatus;
 import com.example.bugtracker.model.ProjectManager;
 import com.example.bugtracker.service.ProjectManagerService;
+import com.example.bugtracker.repository.BugRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +18,7 @@ import java.util.ArrayList;
 public class ProjectManagerController {
 
     private final ProjectManagerService managerService;
+    private final BugRepository bugRepository;
 
     @PostMapping("/api/managers")
     public ProjectManager createManager(@RequestBody ProjectManager manager) {
@@ -33,19 +37,29 @@ public class ProjectManagerController {
 
     @GetMapping("/api/dashboard/pm/{username}")
     public Map<String, Object> getProjectManagerDashboard(@PathVariable String username) {
-        // This would eventually use a service to get real data
         Map<String, Object> dashboardData = new HashMap<>();
         
-        // Sample data
-        dashboardData.put("openBugs", 12);
-        dashboardData.put("inProgressBugs", 5);
-        dashboardData.put("resolvedBugs", 8);
+        // Get actual bug counts by status - no IN_PROGRESS status
+        long openBugs = bugRepository.countByStatus(BugStatus.NEW);
+        long inProgressBugs = bugRepository.countByStatus(BugStatus.ASSIGNED); // Just use ASSIGNED
+        long resolvedBugs = bugRepository.countByStatus(BugStatus.FIXED);
+        long verifiedBugs = bugRepository.countByStatus(BugStatus.VERIFIED);
         
-        // Sample recent bugs
+        dashboardData.put("openBugs", openBugs);
+        dashboardData.put("inProgressBugs", inProgressBugs);
+        dashboardData.put("resolvedBugs", resolvedBugs);
+        dashboardData.put("verifiedBugs", verifiedBugs);
+        
+        // Get actual recent bugs
+        List<Bug> recentBugsList = bugRepository.findTop5ByOrderByCreatedAtDesc();
         List<Map<String, String>> recentBugs = new ArrayList<>();
-        recentBugs.add(Map.of("title", "Login screen freezes", "status", "Open"));
-        recentBugs.add(Map.of("title", "Cannot save profile changes", "status", "In Progress"));
-        recentBugs.add(Map.of("title", "Search results not showing", "status", "Open"));
+        
+        for (Bug bug : recentBugsList) {
+            Map<String, String> bugData = new HashMap<>();
+            bugData.put("title", bug.getTitle());
+            bugData.put("status", bug.getStatus().toString());
+            recentBugs.add(bugData);
+        }
         
         dashboardData.put("recentBugs", recentBugs);
         
