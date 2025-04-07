@@ -55,7 +55,7 @@ public class BugService {
     }
 
     // Get bugs assigned to a specific developer
-    public List<Bug> getBugsByDeveloper(Developer developer) {
+    public List<Bug> getBugsForDeveloper(Developer developer) {
         return bugRepository.findByAssignedTo(developer);
     }
 

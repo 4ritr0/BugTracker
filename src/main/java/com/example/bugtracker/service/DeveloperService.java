@@ -1,6 +1,7 @@
 package com.example.bugtracker.service;
 
 import com.example.bugtracker.model.Bug;
+import com.example.bugtracker.model.BugStatus;
 import com.example.bugtracker.model.Developer;
 import com.example.bugtracker.repository.BugRepository;
 import com.example.bugtracker.repository.DeveloperRepository;
@@ -26,6 +27,12 @@ public class DeveloperService {
         return bugRepository.findByAssignedTo(dev);
     }
 
+    // public List<Bug> getBugsAssignedToDeveloper(Long developerId) {
+    //     Developer dev = developerRepository.findById(developerId)
+    //             .orElseThrow(() -> new RuntimeException("Developer not found"));
+    //     return bugRepository.findByAssignedTo(dev);
+    // }
+
     public List<Developer> getAllDevelopers() {
         return developerRepository.findAll();
     }
@@ -33,4 +40,17 @@ public class DeveloperService {
     public void deleteDeveloper(Long id) {
         developerRepository.deleteById(id);
     }
+
+    public Bug fixBugFix(Long bugId) {
+        Bug bug = bugRepository.findById(bugId)
+                .orElseThrow(() -> new RuntimeException("Bug not found"));
+        
+        if (bug.getStatus() != BugStatus.ASSIGNED) {
+            throw new IllegalStateException("Only ASSIGNED bugs can be fixed");
+        }
+        
+        bug.setStatus(BugStatus.FIXED);
+        return bugRepository.save(bug);
+    }
+
 }

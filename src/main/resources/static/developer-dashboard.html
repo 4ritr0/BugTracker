@@ -41,6 +41,89 @@
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .tab-btn {
+      background-color: transparent;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-right: 10px;
+      border-bottom: 3px solid transparent;
+    }
+    
+    .tab-btn.active {
+      border-bottom: 3px solid #4299e1;
+      font-weight: bold;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .bug-item {
+      margin-bottom: 15px;
+      padding: 15px;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      position: relative;
+    }
+    
+    .bug-actions {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    .fix-btn {
+      background-color: #38a169;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .status-new {
+      color: #e53e3e;
+      font-weight: bold;
+    }
+    
+    .status-assigned {
+      color: #dd6b20;
+      font-weight: bold;
+    }
+    
+    .status-fixed {
+      color: #38a169;
+      font-weight: bold;
+    }
+    
+    .status-verified {
+      color: #2b6cb0;
+      font-weight: bold;
+    }
+    
+    .refresh-btn {
+      background-color: #4299e1;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 15px;
     }
   </style>
 </head>
@@ -54,9 +137,16 @@
   </div>
   
   <div class="dashboard-content">
-    <h3>Bugs Assigned to You</h3>
-    <div id="bugs-list">
-      Loading bugs...
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="view-bugs">View Bugs</button>
+    </div>
+
+    <div id="view-bugs" class="tab-content active">
+      <h3>Bugs Assigned to You</h3>
+      <button class="refresh-btn" onclick="loadBugs()">Refresh Bugs</button>
+      <div id="bugs-list">
+        Loading bugs...
+      </div>
     </div>
   </div>
 
@@ -72,8 +162,24 @@
     }
     
     // Display username
-    document.getElementById("username").textContent = username;
+    document.getElementById("username").textContent = username || "User";
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
     
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all buttons and contents
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        // Add active class to clicked button and corresponding content
+        button.classList.add('active');
+        const tabId = button.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+
     // Logout function
     function logout() {
       localStorage.removeItem("userId");
@@ -82,33 +188,80 @@
       window.location.href = "/index.html";
     }
     
-    // Here you would fetch and display bugs assigned to this developer
-    // Example:
-    /*
+    // Load bugs assigned to this developer
     async function loadBugs() {
       try {
+        if (!userId) {
+          throw new Error("User ID not found");
+        }
+
+        document.getElementById("bugs-list").innerHTML = "Loading bugs...";
+        
         const response = await fetch(`http://localhost:8080/api/bugs/developer/${userId}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }        
+        
         const bugs = await response.json();
         
         const bugsList = document.getElementById("bugs-list");
-        if (bugs.length === 0) {
-          bugsList.innerHTML = "<p>No bugs assigned yet.</p>";
+        if (!bugs || bugs.length === 0) {
+          bugsList.innerHTML = "<p>No bugs assigned to you at the moment.</p>";
         } else {
-          let html = "<ul>";
+          let html = "";
           bugs.forEach(bug => {
-            html += `<li>${bug.title} - ${bug.status}</li>`;
+            const statusClass = bug.status === "NEW" ? "status-new" : 
+                               bug.status === "ASSIGNED" ? "status-assigned" : 
+                               bug.status === "FIXED" ? "status-fixed" :
+                               "status-verified";
+            
+            html += `
+              <div class="bug-item" data-id="${bug.id}">
+                <h4>${bug.title}</h4>
+                <p>Type: ${bug.type}</p>
+                <p>Priority: ${bug.priority}</p>
+                <p>Status: <span class="${statusClass}">${bug.status}</span></p>
+                <p>Description: ${bug.description}</p>
+                ${bug.status === "ASSIGNED" ? 
+                  `<div class="bug-actions">
+                    <button class="fix-btn" onclick="markAsFixed(${bug.id})">Mark as Fixed</button>
+                  </div>` : ''}
+              </div>
+            `;
           });
-          html += "</ul>";
           bugsList.innerHTML = html;
         }
       } catch (error) {
         console.error("Error loading bugs:", error);
-        document.getElementById("bugs-list").innerHTML = "<p>Error loading bugs.</p>";
+        document.getElementById("bugs-list").innerHTML = 
+          `<p style="color: red">Error loading bugs: ${error.message}</p>`;
+      }
+    }
+
+    async function markAsFixed(bugId) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/bugs/${bugId}/fix`, {
+          method: 'PUT'
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        // Reload bugs to show updated status
+        loadBugs();
+        
+      } catch (error) {
+        console.error("Error fixing bug:", error);
+        alert(`Error fixing bug: ${error.message}`);
       }
     }
     
-    loadBugs();
-    */
+    // Load bugs when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      loadBugs();
+    });
   </script>
 </body>
 </html>
