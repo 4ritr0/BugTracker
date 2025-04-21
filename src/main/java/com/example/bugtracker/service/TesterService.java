@@ -56,4 +56,17 @@ public class TesterService {
         bug.setStatus(BugStatus.VERIFIED);
         return bugRepository.save(bug);
     }
+
+    // New method to reject fixed bugs
+    public Bug rejectBugFix(Long bugId) {
+        Bug bug = bugRepository.findById(bugId)
+                .orElseThrow(() -> new RuntimeException("Bug not found"));
+        
+        if (bug.getStatus() != BugStatus.FIXED) {
+            throw new IllegalStateException("Only FIXED bugs can be rejected");
+        }
+        
+        bug.setStatus(BugStatus.ASSIGNED);
+        return bugRepository.save(bug);
+    }
 }

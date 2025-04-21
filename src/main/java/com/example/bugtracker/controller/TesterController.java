@@ -53,4 +53,10 @@ public class TesterController {
         Bug verifiedBug = testerService.verifyBugFix(bugId);
         return ResponseEntity.ok(verifiedBug);
     }
+
+    @PutMapping("/api/bugs/{bugId}/reject")
+    public ResponseEntity<Bug> rejectBug(@PathVariable Long bugId) {
+        Bug rejectedBug = testerService.rejectBugFix(bugId);
+        return ResponseEntity.ok(rejectedBug);
+    }
 }

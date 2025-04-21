@@ -99,10 +99,20 @@
       margin-top: 10px;
       display: flex;
       justify-content: flex-end;
+      gap: 10px;
     }
     
     .verify-btn {
       background-color: #38a169;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .reject-btn {
+      background-color: #e53e3e;
       color: white;
       border: none;
       padding: 6px 12px;
@@ -300,6 +310,7 @@
                 <p>Description: ${bug.description}</p>
                 ${bug.status === "FIXED" ? 
                   `<div class="bug-actions">
+                    <button class="reject-btn" onclick="rejectFix(${bug.id})">Reject Fix</button>
                     <button class="verify-btn" onclick="markAsVerified(${bug.id})">Mark as Verified</button>
                   </div>` : ''}
               </div>
@@ -331,6 +342,27 @@
       } catch (error) {
         console.error("Error verifying bug:", error);
         alert(`Error verifying bug: ${error.message}`);
+      }
+    }
+    
+    // Reject fix and send back to assigned state
+    async function rejectFix(bugId) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/bugs/${bugId}/reject`, {
+          method: 'PUT'
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        // Reload bugs to show updated status
+        loadBugs();
+        alert("Fix rejected. Bug sent back to developer.");
+        
+      } catch (error) {
+        console.error("Error rejecting fix:", error);
+        alert(`Error rejecting fix: ${error.message}`);
       }
     }
     
