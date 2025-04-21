@@ -36,6 +36,16 @@
       cursor: pointer;
     }
     
+    .refresh-btn {
+      background-color: #4299e1;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    
     .dashboard-content {
       background-color: white;
       padding: 20px;
@@ -218,6 +228,13 @@
       font-size: 12px;
       margin-left: 5px;
     }
+
+    .loading-indicator {
+      display: none;
+      margin-left: 10px;
+      color: #4299e1;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -226,7 +243,13 @@
     <div class="user-info">
       Welcome, <span id="username">User</span>!
     </div>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+    <div>
+      <button class="refresh-btn" onclick="refreshData()">
+        <span>Refresh</span>
+      </button>
+      <span id="loading-indicator" class="loading-indicator">Refreshing...</span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
   </div>
   
   <div class="dashboard-content">
@@ -360,6 +383,44 @@
       localStorage.removeItem("username");
       localStorage.removeItem("role");
       window.location.href = "/index.html";
+    }
+    
+    // Refresh data function
+    function refreshData() {
+      const loadingIndicator = document.getElementById('loading-indicator');
+      loadingIndicator.style.display = 'inline';
+      
+      // Promise.all to wait for all data loading to complete
+      Promise.all([
+        loadDashboardStats(),
+        loadAllBugs(),
+        loadNewBugs()
+      ])
+      .then(() => {
+        loadingIndicator.style.display = 'none';
+        // Show a small notification that the refresh is complete
+        const refreshNotification = document.createElement('div');
+        refreshNotification.textContent = 'Data refreshed successfully!';
+        refreshNotification.style.position = 'fixed';
+        refreshNotification.style.top = '20px';
+        refreshNotification.style.right = '20px';
+        refreshNotification.style.backgroundColor = '#38a169';
+        refreshNotification.style.color = 'white';
+        refreshNotification.style.padding = '10px 20px';
+        refreshNotification.style.borderRadius = '4px';
+        refreshNotification.style.zIndex = '1000';
+        document.body.appendChild(refreshNotification);
+        
+        // Remove the notification after 3 seconds
+        setTimeout(() => {
+          document.body.removeChild(refreshNotification);
+        }, 3000);
+      })
+      .catch(error => {
+        loadingIndicator.style.display = 'none';
+        console.error("Error refreshing data:", error);
+        alert("Error refreshing data. Please try again.");
+      });
     }
     
     // Modal elements
@@ -556,9 +617,7 @@
         modal.style.display = "none";
         
         // Reload data
-        loadDashboardStats();
-        loadAllBugs();
-        loadNewBugs();
+        refreshData();
         
         alert("Bug assigned successfully!");
       } catch (error) {

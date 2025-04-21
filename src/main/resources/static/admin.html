@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Tracker Admin Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        h1, h2, h3 {
+            margin: 0;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: #2ecc71;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        thead th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            width: 50%;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #333;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom: 2px solid #3498db;
+            color: #3498db;
+            font-weight: 500;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bug Tracker Admin Dashboard</h1>
+    </header>
+    
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-tab="projectManagers">Project Managers</div>
+            <div class="tab" data-tab="developers">Developers</div>
+            <div class="tab" data-tab="testers">Testers</div>
+        </div>
+        
+        <div class="dashboard">
+            <!-- Project Managers Tab -->
+            <div id="projectManagers" class="tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Project Managers</h2>
+                        <button class="btn btn-success" id="addPmBtn">Add Project Manager</button>
+                    </div>
+                    <div class="card-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Username</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pmTableBody">
+                                <!-- Project manager data will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Developers Tab -->
+            <div id="developers" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Developers</h2>
+                        <button class="btn btn-success" id="addDevBtn">Add Developer</button>
+                    </div>
+                    <div class="card-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Username</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="devTableBody">
+                                <!-- Developer data will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Testers Tab -->
+            <div id="testers" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Testers</h2>
+                        <button class="btn btn-success" id="addTesterBtn">Add Tester</button>
+                    </div>
+                    <div class="card-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Username</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="testerTableBody">
+                                <!-- Tester data will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Project Manager Modal -->
+    <div id="addPmModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Project Manager</h2>
+            <form id="addPmForm">
+                <div class="form-group">
+                    <label for="pmName">Name</label>
+                    <input type="text" id="pmName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="pmusername">Username</label>
+                    <input type="text" id="pmusername" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="pmpwd">Password</label>
+                    <input type="password" id="pmpwd" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-success">Save</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add Developer Modal -->
+    <div id="addDevModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Developer</h2>
+            <form id="addDevForm">
+                <div class="form-group">
+                    <label for="devName">Name</label>
+                    <input type="text" id="devName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="devusername">Username</label>
+                    <input type="text" id="devusername" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="devpwd">Password</label>
+                    <input type="password" id="devpwd" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-success">Save</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add Tester Modal -->
+    <div id="addTesterModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Tester</h2>
+            <form id="addTesterForm">
+                <div class="form-group">
+                    <label for="testerName">Name</label>
+                    <input type="text" id="testerName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="testerusername">Username</label>
+                    <input type="text" id="testerusername" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="testerpwd">Password</label>
+                    <input type="password" id="testerpwd" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-success">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab navigation
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Modal handling
+            const modals = {
+                pm: document.getElementById('addPmModal'),
+                dev: document.getElementById('addDevModal'),
+                tester: document.getElementById('addTesterModal')
+            };
+            
+            const openModalButtons = {
+                pm: document.getElementById('addPmBtn'),
+                dev: document.getElementById('addDevBtn'),
+                tester: document.getElementById('addTesterBtn')
+            };
+            
+            const closeButtons = document.querySelectorAll('.close');
+            
+            openModalButtons.pm.addEventListener('click', () => modals.pm.style.display = 'block');
+            openModalButtons.dev.addEventListener('click', () => modals.dev.style.display = 'block');
+            openModalButtons.tester.addEventListener('click', () => modals.tester.style.display = 'block');
+            
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    modals.pm.style.display = 'none';
+                    modals.dev.style.display = 'none';
+                    modals.tester.style.display = 'none';
+                });
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target === modals.pm) modals.pm.style.display = 'none';
+                if (event.target === modals.dev) modals.dev.style.display = 'none';
+                if (event.target === modals.tester) modals.tester.style.display = 'none';
+            });
+            
+            // Forms submission
+            const pmForm = document.getElementById('addPmForm');
+            const devForm = document.getElementById('addDevForm');
+            const testerForm = document.getElementById('addTesterForm');
+            
+            pmForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('pmName').value;
+                const username = document.getElementById('pmusername').value;
+                const password = document.getElementById('pmpwd').value;
+                
+                createProjectManager({ name, username, password });
+                modals.pm.style.display = 'none';
+                pmForm.reset();
+            });
+            
+            devForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('devName').value;
+                const username = document.getElementById('devusername').value;
+                const password = document.getElementById('devpwd').value;
+                
+                createDeveloper({ name, username, password });
+                modals.dev.style.display = 'none';
+                devForm.reset();
+            });
+            
+            testerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('testerName').value;
+                const username = document.getElementById('testerusername').value;
+                const password = document.getElementById('testerpwd').value;
+                
+                createTester({ name, username, password });
+                modals.tester.style.display = 'none';
+                testerForm.reset();
+            });
+            
+            // Initial data loading
+            loadProjectManagers();
+            loadDevelopers();
+            loadTesters();
+        });
+        
+        // API functions for Project Managers
+        function loadProjectManagers() {
+            fetch('/admin/project-managers')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('pmTableBody');
+                    tableBody.innerHTML = '';
+                    
+                    data.forEach(pm => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${pm.id}</td>
+                            <td>${pm.name}</td>
+                            <td>${pm.username}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteProjectManager(${pm.id})">Delete</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error loading project managers:', error));
+        }
+        
+        function createProjectManager(pm) {
+            fetch('/admin/project-managers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(pm)
+            })
+            .then(response => response.json())
+            .then(() => loadProjectManagers())
+            .catch(error => console.error('Error creating project manager:', error));
+        }
+        
+        function deleteProjectManager(id) {
+            if (confirm('Are you sure you want to delete this project manager?')) {
+                fetch(`/admin/project-managers/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(() => loadProjectManagers())
+                .catch(error => console.error('Error deleting project manager:', error));
+            }
+        }
+        
+        // API functions for Developers
+        function loadDevelopers() {
+            fetch('/admin/developers')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('devTableBody');
+                    tableBody.innerHTML = '';
+                    
+                    data.forEach(dev => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${dev.id}</td>
+                            <td>${dev.name}</td>
+                            <td>${dev.username}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteDeveloper(${dev.id})">Delete</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error loading developers:', error));
+        }
+        
+        function createDeveloper(dev) {
+            fetch('/admin/developers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dev)
+            })
+            .then(response => response.json())
+            .then(() => loadDevelopers())
+            .catch(error => console.error('Error creating developer:', error));
+        }
+        
+        function deleteDeveloper(id) {
+            if (confirm('Are you sure you want to delete this developer?')) {
+                fetch(`/admin/developers/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(() => loadDevelopers())
+                .catch(error => console.error('Error deleting developer:', error));
+            }
+        }
+        
+        // API functions for Testers
+        function loadTesters() {
+            fetch('/admin/testers')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('testerTableBody');
+                    tableBody.innerHTML = '';
+                    
+                    data.forEach(tester => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${tester.id}</td>
+                            <td>${tester.name}</td>
+                            <td>${tester.username}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteTester(${tester.id})">Delete</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error loading testers:', error));
+        }
+        
+        function createTester(tester) {
+            fetch('/admin/testers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(tester)
+            })
+            .then(response => response.json())
+            .then(() => loadTesters())
+            .catch(error => console.error('Error creating tester:', error));
+        }
+        
+        function deleteTester(id) {
+            if (confirm('Are you sure you want to delete this tester?')) {
+                fetch(`/admin/testers/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(() => loadTesters())
+                .catch(error => console.error('Error deleting tester:', error));
+            }
+        }
+    </script>
+</body>
+</html>

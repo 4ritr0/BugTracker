@@ -27,6 +27,20 @@
       font-weight: bold;
     }
     
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .refresh-btn {
+      background-color: #4299e1;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
     .logout-btn {
       background-color: #e53e3e;
       color: white;
@@ -154,7 +168,10 @@
     <div class="user-info">
       Welcome, <span id="username">User</span>!
     </div>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+    <div class="header-buttons">
+      <button class="refresh-btn" onclick="loadBugs()">Refresh Bugs</button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
   </div>
   
   <div class="dashboard-content">
