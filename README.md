@@ -46,23 +46,6 @@ A modern, full-stack **MVC-based Bug Management System** built with Spring Boot,
 │   └── test/
 │       └── ...
 ```
-
----
-
-## 🖼️ MVC Architecture Flowchart
-
-```
-flowchart TD
-    A[User (Browser)] -->|HTTP Request| B[View (HTML/CSS/JS)]
-    B -->|Form/API Call| C[Controller (Spring Boot)]
-    C -->|Service Call| D[Service Layer]
-    D -->|DB Access| E[Repository (JPA)]
-    E -->|CRUD| F[(MySQL DB)]
-    D -->|Return Data| C
-    C -->|Render/Redirect| B
-    B -->|Display| A
-```
-
 ---
 
 ## ✨ Implemented Features (Details)
