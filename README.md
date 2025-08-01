@@ -51,7 +51,7 @@ A modern, full-stack **MVC-based Bug Management System** built with Spring Boot,
 
 ## 🖼️ MVC Architecture Flowchart
 
-```mermaid
+```
 flowchart TD
     A[User (Browser)] -->|HTTP Request| B[View (HTML/CSS/JS)]
     B -->|Form/API Call| C[Controller (Spring Boot)]
