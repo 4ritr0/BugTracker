@@ -95,12 +95,6 @@ A modern, full-stack **MVC-based Bug Management System** built with Spring Boot,
 
 ---
 
-## 📬 Contributions
-
-Feel free to fork, open issues, or submit PRs! For major changes, please open an issue first to discuss what you would like to change.
-
----
-
 ## 📄 License
 
 This project is for educational/demo purposes.
