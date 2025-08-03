@@ -93,8 +93,3 @@ A modern, full-stack **MVC-based Bug Management System** built with Spring Boot,
    ```
 4. **Access the app** at [http://localhost:8080](http://localhost:8080)
 
----
-
-## 📄 License
-
-This project is for educational/demo purposes.
