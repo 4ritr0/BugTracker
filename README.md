@@ -84,7 +84,7 @@ A modern, full-stack **MVC-based Bug Management System** built with Spring Boot,
 
 1. **Clone the repository**
    ```sh
-   git clone <repo-url>
+   git clone https://github.com/4ritr0/BugTracker.git
    ```
 2. **Configure MySQL** in `application.properties`.
 3. **Build & Run**
